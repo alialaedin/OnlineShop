@@ -1,19 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Admin\Http\Controllers\AdminController;
+use Modules\Admin\Http\Controllers\Api\Admin\AdminController;
 
-/*
- *--------------------------------------------------------------------------
- * API Routes
- *--------------------------------------------------------------------------
- *
- * Here is where you can register API routes for your application. These
- * routes are loaded by the RouteServiceProvider within a group which
- * is assigned the "api" middleware group. Enjoy building your API!
- *
-*/
-
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('admin', AdminController::class)->names('admin');
+Route::name('admins.')->prefix('admins')->middleware('auth:admin-api')->group(function () {
+	Route::get('/', [AdminController::class, 'index'])->middleware('can:view admins')->name('index');
+	Route::post('/', [AdminController::class, 'store'])->middleware('can:create admins')->name('store');
+	Route::patch('/{admin}', [AdminController::class, 'update'])->middleware('can:edit admins')->name('update');
+	Route::delete('/{admin}', [AdminController::class, 'destory'])->middleware('can:delete admins')->name('destory');
 });

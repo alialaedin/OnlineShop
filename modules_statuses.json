@@ -1,5 +1,13 @@
 {
     "Admin": true,
     "Customer": true,
-    "Auth": true
+    "Auth": true,
+    "Product": true,
+    "Permission": true,
+    "Area": true,
+    "Core": true,
+    "Slider": true,
+    "Specification": true,
+    "Store": true,
+    "Sms": true
 }

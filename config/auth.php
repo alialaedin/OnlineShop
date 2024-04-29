@@ -1,5 +1,8 @@
 <?php
 
+use Modules\Admin\Models\Admin;
+use Modules\Customer\Models\Customer;
+
 return [
 
     /*
@@ -40,6 +43,14 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'admin-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
+        'customer-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
@@ -63,6 +74,14 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', Admin::class),
+        ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', Customer::class),
         ],
 
         // 'users' => [

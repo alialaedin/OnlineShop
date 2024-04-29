@@ -1,19 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Customer\Http\Controllers\CustomerController;
+use Modules\Customer\Http\Controllers\Api\Admin\CustomerController as AdminCustomerController;
 
-/*
- *--------------------------------------------------------------------------
- * API Routes
- *--------------------------------------------------------------------------
- *
- * Here is where you can register API routes for your application. These
- * routes are loaded by the RouteServiceProvider within a group which
- * is assigned the "api" middleware group. Enjoy building your API!
- *
-*/
-
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('customer', CustomerController::class)->names('customer');
+// Customer (Admin)
+Route::name('customers.')->prefix('customers')->middleware('auth:admin-api')->group(function () {
+	Route::get('/', [AdminCustomerController::class, 'index'])->middleware('can:view customers');
+	Route::get('/{customer}', [AdminCustomerController::class, 'show'])->middleware('can:view customers');
+	Route::delete('/{customer}', [AdminCustomerController::class, 'destroy'])->middleware('can:delete customers');
 });
