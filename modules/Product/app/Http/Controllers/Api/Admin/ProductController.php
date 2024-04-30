@@ -17,21 +17,17 @@ class ProductController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$categories = Cache::rememberForever('without_children', function () {
-			return Category::query()
-				->select(['id', 'name'])
-				->whereDoesntHave('children')
-				->latest('id')
-				->get();
-		});
+		$categories = Category::query()
+			->select(['id', 'name'])
+			->whereDoesntHave('children')
+			->latest('id')
+			->get();
 
-		$products = Cache::rememberForever('products', function () {
-			return Product::query()
-				->select(['id', 'title', 'category_id', 'status', 'quantity', 'price', 'slug'])
-				->with('category:id,name')
-				->latest('id')
-				->paginate();
-		});
+		$products = Product::query()
+			->select(['id', 'title', 'category_id', 'status', 'quantity', 'price', 'slug'])
+			->with('category:id,name')
+			->latest('id')
+			->paginate();
 
 		return response()->success('تمام محصولات', compact('products', 'categories'));
 	}
@@ -51,8 +47,7 @@ class ProductController extends Controller
 		$product = Product::query()->create($request->validated());
 		$product->uploadFiles($request);
 		$product->attachOrSyncSpecifications($request->input('specifications'), 'POST');
-		
-		Product::clearAllCaches();
+
 		Event::dispatch(new ProductCreated($product));
 
 		return response()->success('محصول جدید با موفقیت ثبت شد!');
@@ -64,7 +59,6 @@ class ProductController extends Controller
 			$product->query()->update($request->validated());
 			$product->uploadFiles($request);
 			$product->attachOrSyncSpecifications($request->input('specifications'), 'PATCH');
-			Product::clearAllCaches();
 
 			return response()->success('محصول جدید با موفقیت ثبت شد!');
 		} catch (Exception $e) {

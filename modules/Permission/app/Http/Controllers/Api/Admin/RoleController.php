@@ -5,7 +5,6 @@ namespace Modules\Permission\App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Cache;
 use Modules\Permission\App\Http\Requests\Api\Admin\RoleStoreRequest;
 use Modules\Permission\App\Http\Requests\Api\Admin\RoleUpdateRequest;
 use Modules\Permission\App\Models\Role;
@@ -30,13 +29,11 @@ class RoleController extends Controller
 
 	public function index(): JsonResponse
 	{
-		$roles = Cache::rememberForever('roles', function() {
-			return Role::query()
+		$roles = Role::query()
 			->select(['id', 'name', 'label', 'created_at'])
 			->latest('id')
 			->paginate();
-		});
-		
+
 		return response()->success('تمام نقش ها', compact('roles'));
 	}
 

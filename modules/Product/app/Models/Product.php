@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\Cart\Models\Cart;
 use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
@@ -63,13 +62,6 @@ class Product extends Model implements HasMedia
 	}
 
 	// Cache
-	protected static function clearAllCaches()
-	{
-		if (Cache::has('products')) {
-			Cache::forget('products');
-		}
-	}
-
 	protected static function booted(): void
 	{
 		static::deleting(function (Product $product) {

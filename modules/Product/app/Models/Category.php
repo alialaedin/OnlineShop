@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 use Modules\Specification\Models\Specification;
 use Spatie\Activitylog\LogOptions;
@@ -42,17 +41,6 @@ class Category extends Model implements HasMedia
 	}
 
 	// Cache
-	protected static function clearAllCaches()
-	{
-		$cacheKeys = ['categories', 'without_parent', 'without_children'];
-
-		foreach ($cacheKeys as $key) {
-			if (Cache::has($key)) {
-				Cache::forget($key);
-			}
-		}
-	}
-
 	protected static function booted(): void
 	{
 		static::deleting(function (Category $category) {

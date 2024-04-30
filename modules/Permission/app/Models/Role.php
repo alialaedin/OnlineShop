@@ -43,7 +43,5 @@ class Role extends SpatieRole
 				throw new ModelCannotBeDeletedException("نقش {$superAdmin} به کاربر یا کاربرانی نسبت داده شده و قابل حذف نمی باشد.");
 			}
 		});
-
-		static::clearAllCaches(['roles']);
 	}
 }

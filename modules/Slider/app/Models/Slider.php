@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
@@ -29,14 +28,6 @@ class Slider extends Model implements HasMedia
 		return LogOptions::defaults()
 			->logOnly($this->fillable)
 			->setDescriptionForEvent(fn (string $eventName) => 'اسلایدر ' . __('logs.' . $eventName));
-	}
-
-	// Cache
-	protected static function clearAllCaches()
-	{
-		if (Cache::has('sliders')) {
-			Cache::forget('sliders');
-		}
 	}
 
 	// Media Library

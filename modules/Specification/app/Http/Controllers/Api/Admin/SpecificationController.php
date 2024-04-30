@@ -14,22 +14,18 @@ class SpecificationController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$categories = Cache::rememberForever('without_parent', function () {
-			return Category::query()
-				->select('id', 'name')
-				->whereNull('parent_id')
-				->orWhereDoesntHave('parent')
-				->latest('id')
-				->get();
-		});
+		$categories = Category::query()
+			->select('id', 'name')
+			->whereNull('parent_id')
+			->orWhereDoesntHave('parent')
+			->latest('id')
+			->get();
 
-		$specifications = Cache::rememberForever('specifications', function () {
-			return Specification::query()
-				->select('id', 'name', 'status')
-				->with('categories:id,name')
-				->latest('id')
-				->get();
-		});
+		$specifications = Specification::query()
+			->select('id', 'name', 'status')
+			->with('categories:id,name')
+			->latest('id')
+			->get();
 
 		return response()->success('تمام مشخصات', compact('specifications', 'categories'));
 	}
@@ -38,7 +34,6 @@ class SpecificationController extends Controller
 	{
 		$specification = Specification::query()->create($request->only('name', 'status'));
 		$specification->categories()->attach($request->input('category_ids'));
-		Specification::clearAllCaches();
 
 		return response()->success('مشخصصه جدید با موفقیت ساخته شد!');
 	}
@@ -47,14 +42,12 @@ class SpecificationController extends Controller
 	{
 		$specification->query()->update($request->only('name', 'status'));
 		$specification->categories()->sync($request->input('category_ids'));
-		Specification::clearAllCaches();
 
 		return response()->success('مشخصصه با موفقیت ویرایش شد!');
 	}
 	public function destroy(Specification $specification): JsonResponse
 	{
 		$specification->delete();
-		Specification::clearAllCaches();
 
 		return response()->success('مشخصصه با موفقیت حذف شد!');
 	}

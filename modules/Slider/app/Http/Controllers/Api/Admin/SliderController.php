@@ -14,9 +14,7 @@ class SliderController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$sliders = Cache::rememberForever('sliders', function () {
-			return Slider::query()->select('id', 'link', 'status')->latest('id')->get();
-		});
+		$sliders = Slider::query()->select('id', 'link', 'status')->latest('id')->get();
 
 		return response()->success('تمام اسلایدر ها', compact('sliders'));
 	}
@@ -26,7 +24,6 @@ class SliderController extends Controller
 		try {
 			$slider = Slider::query()->create($request->only('link', 'status'));
 			$slider->uploadFiles($request);
-			Slider::clearAllCaches();
 
 			return response()->success('اسلایدر جدید با موفقیت ساخته شد!');
 		} catch (Exception $e) {
@@ -39,7 +36,6 @@ class SliderController extends Controller
 		try {
 			$slider->query()->update($request->only('link', 'status'));
 			$slider->uploadFiles($request);
-			Slider::clearAllCaches();
 
 			return response()->success('اسلایدر با موفقیت ویرایش شد!');
 		} catch (Exception $e) {
@@ -49,7 +45,6 @@ class SliderController extends Controller
 	public function destroy(Slider $slider): JsonResponse
 	{
 		$slider->delete();
-		Slider::clearAllCaches();
 
 		return response()->success("اسلایدر با شناسه {$slider->id} با موفقیت حذف شد!");
 	}
