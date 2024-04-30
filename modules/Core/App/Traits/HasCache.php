@@ -21,6 +21,8 @@ trait HasCache
 			}
 		}
 	}
+	
+	
 
 	private static function forgetAll(array $cacheKeys): void
 	{

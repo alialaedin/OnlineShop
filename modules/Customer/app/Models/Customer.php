@@ -5,8 +5,8 @@ namespace Modules\Customer\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\Cart\Models\Cart;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
@@ -27,6 +27,7 @@ class Customer extends Authenticatable
 	protected $hidden = [
 		'password',
 	];
+
 	protected function casts(): array
 	{
 		return [
@@ -42,17 +43,14 @@ class Customer extends Authenticatable
 			->setDescriptionForEvent(fn (string $eventName) => 'مشتری ' . __('logs.' . $eventName));
 	}
 
-	// Cache
-	protected static function clearAllCaches(): Void
-	{
-		if (Cache::has('customers')) {
-			Cache::forget('customers');
-		}
-	}
-
 	// Relations
 	public function addresses(): HasMany
 	{
 		return $this->hasMany(Address::class);
+	}
+
+	public function carts(): HasMany
+	{
+		return $this->hasMany(Cart::class);
 	}
 }

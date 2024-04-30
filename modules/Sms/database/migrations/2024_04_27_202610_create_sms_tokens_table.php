@@ -16,7 +16,7 @@ return new class extends Migration
 			$table->string('mobile');
 			$table->string('token');
 			$table->timestamp('expires_at');
-			$table->date('verified_at');
+			$table->date('verified_at')->nullable();
 			$table->timestamps();
 		});
 	}

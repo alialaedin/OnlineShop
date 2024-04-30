@@ -31,7 +31,7 @@ class VerifyRequest extends FormRequest
 			throw Helpers::makeValidationException('کاربری با این شماره موبایل پیدا نشد!', 'mobile');
 		} elseif ($smsToken->token !== $this->sms_token) {
 			throw Helpers::makeValidationException('کد وارد شده نادرست است!', 'sms_token');
-		} elseif (Carbon::now()->gt($smsToken->expired_at)) {
+		} elseif (Carbon::now()->gt(Carbon::parse($smsToken->expired_at))) {
 			throw Helpers::makeValidationException('کد وارد شده منقضی شده است!', 'sms_token');
 		}
 

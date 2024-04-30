@@ -9,5 +9,6 @@
     "Slider": true,
     "Specification": true,
     "Store": true,
-    "Sms": true
+    "Sms": true,
+    "Cart": true
 }

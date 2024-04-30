@@ -17,20 +17,21 @@ class StoreController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$stores = Cache::rememberForever('stores', function () {
-			return Store::query()
-				->select('id', 'product_id', 'balance')
-				->with('product:id,title')
-				->latest('id')
-				->paginate();
-		});
+		$stores = Store::query()
+			->select('id', 'product_id', 'balance')
+			->with('product:id,title')
+			->latest('id')
+			->paginate();
 
 		return response()->success('تمام اجناس انبار', compact('stores'));
 	}
 
 	public function show(Store $store): JsonResponse
 	{
-		$store->load('transactions:id,store_id,quantity,type,description');
+		$store->load([
+			'transactions:id,store_id,quantity,type,description',
+			'product:id,title'
+		]);
 
 		return response()->success('', compact('store'));
 	}
@@ -50,13 +51,12 @@ class StoreController extends Controller
 
 			Event::dispatch(new StoreCreated($request));
 			DB::commit();
-			
 		} catch (Exception $e) {
 			DB::rollBack();
 
 			return response()->error('خطا در انجام عملیات : ' . $e->getMessage());
 		}
-		
+
 		Store::clearAllCaches();
 		$operation = $request->type == 'increment' ? 'افزایش' : 'کاهش';
 

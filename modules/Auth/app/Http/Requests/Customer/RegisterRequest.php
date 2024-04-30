@@ -3,7 +3,6 @@
 namespace Modules\Auth\Http\Requests\Customer;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Modules\Core\App\Helpers\Helpers;
 use Modules\Core\App\Rules\IranMobile;
@@ -46,8 +45,17 @@ class RegisterRequest extends FormRequest
 		}
 
 		$this->merge([
-			'password' => bcrypt($this->input('password'))
+			'password' => bcrypt($this->input('password')),
+			
 		]);
+	}
+
+	public function validated($key = null, $default = null)
+	{
+		$validated = parent::validated();
+		$validated['status'] = 1; 
+
+		return $validated;
 	}
 
 	public function authorize(): bool

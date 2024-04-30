@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\Sanctum;
@@ -31,12 +30,12 @@ class AuthController extends Controller
 			$customer = Customer::query()->where('mobile', $mobile)->exists();
 			$status = $customer ? 'login' : 'register';
 
-			if ($status === 'register') {
-				$result = event(new SmsVerify($mobile));
-				if ($result[0]['status'] != 200) {
-					throw Helpers::makeValidationException('ارسال کدفعال سازی ناموفق بود.لطفا دوباره تلاش کنید.');
-				}
-			}
+			// if ($status === 'register') {
+			// 	$result = event(new SmsVerify($mobile));
+			// 	if ($result[0]['status'] != 200) {
+			// 		throw Helpers::makeValidationException('ارسال کدفعال سازی ناموفق بود.لطفا دوباره تلاش کنید.');
+			// 	}
+			// }
 
 			return response()->success('بررسی وضعیت ثبت نام مشتری', compact('status', 'mobile'));
 		} catch (Exception $exception) {
@@ -59,10 +58,10 @@ class AuthController extends Controller
 				]
 			);
 
-			$result = event(new SmsVerify($mobile));
-			if ($result[0]['status'] != 200) {
-				throw new Exception($result[0]['message']);
-			}
+			// $result = event(new SmsVerify($mobile));
+			// if ($result[0]['status'] != 200) {
+			// 	throw new Exception($result[0]['message']);
+			// }
 
 			return response()->success('بررسی وضعیت ثبت نام مشتری', compact('mobile'));
 		} catch (Exception $exception) {

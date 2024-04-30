@@ -4,7 +4,6 @@ namespace Modules\Admin\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -41,14 +40,6 @@ class Admin extends Authenticatable
 		return LogOptions::defaults()
 			->logOnly($this->fillable)
 			->setDescriptionForEvent(fn (string $eventName) => 'ادمین ' . __('logs.' . $eventName));
-	}
-
-	// Cache
-	protected static function clearAllCaches(): Void
-	{
-		if (Cache::has('admins')) {
-			Cache::forget('admins');
-		}
 	}
 
 	protected static function booted(): void

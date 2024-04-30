@@ -4,7 +4,7 @@ namespace Modules\Area\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Area\App\Models\Province;
+use Modules\Area\Models\Province;
 
 class ProvinceSeederTableSeeder extends Seeder
 {

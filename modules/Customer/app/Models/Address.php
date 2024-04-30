@@ -2,31 +2,33 @@
 
 namespace Modules\Customer\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
 use Modules\Area\Models\City;
+use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 
 class Address extends Model
 {
 	use HasFactory;
 
 	protected $fillable = [
-		'customer_id',
-		'city_id',
 		'name',
 		'mobile',
 		'address',
 		'postal_code'
 	];
-	
-	// Cache
-	protected static function clearAllCaches(): Void
+
+	protected static function booted(): void
 	{
-		if (Cache::has('addresses')) {
-			Cache::forget('addresses');
-		}
+		// static::deleting(function (Address $address) {
+		// 	$messages = 'این آدرس قابل حذف نمی باشد زیرا در سفارشی استفاده شده است!';
+		// 	if ($address->orders()->exists()) {
+		// 		throw new ModelCannotBeDeletedException($messages);
+		// 	}
+		// });
 	}
 
 	// Relations
@@ -38,5 +40,15 @@ class Address extends Model
 	public function city(): BelongsTo
 	{
 		return $this->belongsTo(City::class);
+	}
+
+	// Query 
+	public function scopeWhereCustomerId(Builder $query, int $customerId)
+	{
+		$query->where('customer_id', $customerId);
+	}
+	public function scopeSelectAllWithoutTimestamp(Builder $query)
+	{
+		$query->select('id', 'customer_id', 'name', 'mobile', 'city_id', 'address', 'postal_code');
 	}
 }

@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Modules\Cart\Models\Cart;
 use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 use Modules\Specification\Models\Specification;
 use Modules\Store\Models\Store;
@@ -30,9 +32,9 @@ class Product extends Model implements HasMedia
 	use HasFactory, LogsActivity, InteractsWithMedia, HasSlug;
 
 	protected $fillable = [
+		'category_id',
 		'title',
 		'slug',
-		'category_id',
 		'description',
 		'status',
 		'quantity',
@@ -93,6 +95,11 @@ class Product extends Model implements HasMedia
 	public function store(): HasOne
 	{
 		return $this->hasOne(Store::class);
+	}
+
+	public function carts(): HasMany
+	{
+		return $this->hasMany(Cart::class);
 	}
 
 	// Functions
