@@ -14,6 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Modules\Cart\Models\Cart;
 use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
+use Modules\Order\Models\OrderItem;
 use Modules\Specification\Models\Specification;
 use Modules\Store\Models\Store;
 use Spatie\Activitylog\LogOptions;
@@ -67,12 +68,15 @@ class Product extends Model implements HasMedia
 		static::deleting(function (Product $product) {
 			$messages = [
 				'quantity' => 'این محصول قابل حذف نمی باشد زیرا موجودی ان بیشتر از 0 است!',
-				'carts' => 'این محصول در سبد خریدی استفاده شده است و قابل حذف نمی باشد!'
+				'carts' => 'این محصول در سبد خریدی استفاده شده است و قابل حذف نمی باشد!',
+				'items' => 'برای این محصول سفارشی ثبت شده و قابل حذف نمی باشد!'
 			];
 			if ($product->quantity > 0) {
 				throw new ModelCannotBeDeletedException($messages['quantity']);
 			} elseif ($product->carts()->exists()) {
 				throw new ModelCannotBeDeletedException($messages['carts']);
+			} elseif ($product->items()->exists()) {
+				throw new ModelCannotBeDeletedException($messages['items']);
 			}
 		});
 	}
@@ -97,6 +101,11 @@ class Product extends Model implements HasMedia
 	public function carts(): HasMany
 	{
 		return $this->hasMany(Cart::class);
+	}
+
+	public function items(): HasMany
+	{
+		return $this->hasMany(OrderItem::class, 'order_id');
 	}
 
 	// Functions

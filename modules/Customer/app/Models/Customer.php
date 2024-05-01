@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Cart\Models\Cart;
+use Modules\Order\Models\Order;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
@@ -52,5 +53,10 @@ class Customer extends Authenticatable
 	public function carts(): HasMany
 	{
 		return $this->hasMany(Cart::class);
+	}
+
+	public function orders(): HasMany
+	{
+		return $this->hasMany(Order::class);
 	}
 }

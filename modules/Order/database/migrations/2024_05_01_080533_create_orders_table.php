@@ -18,9 +18,9 @@ return new class extends Migration
       $table->foreignIdFor(Customer::class)->constrained()->cascadeOnDelete();
       $table->foreignIdFor(Address::class)->constrained()->cascadeOnDelete();
       $table->json('address');
-      $table->unsignedBigInteger('');
+      $table->unsignedBigInteger('amount');
       $table->text('description')->nullable();
-      $table->enum('status', ['wait_for_payment', 'new', 'in_progress', 'fail', 'delivered']);
+      $table->enum('status', ['wait_for_payment', 'new', 'in_progress', 'failed', 'delivered']);
       $table->timestamps();
     });
   }

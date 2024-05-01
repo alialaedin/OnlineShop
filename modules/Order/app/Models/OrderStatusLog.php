@@ -4,19 +4,20 @@ namespace Modules\Order\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Order\Database\Factories\OrderStatusLogFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderStatusLog extends Model
 {
-    use HasFactory;
+	use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [];
+	protected $fillable = [
+		'order_id',
+		'status'
+	];
 
-    protected static function newFactory(): OrderStatusLogFactory
-    {
-        //return OrderStatusLogFactory::new();
-    }
+	// Relations 
+	public function order(): BelongsTo
+	{
+		return $this->belongsTo(Order::class);
+	}
 }
