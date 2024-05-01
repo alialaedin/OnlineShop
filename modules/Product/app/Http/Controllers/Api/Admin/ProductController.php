@@ -55,14 +55,18 @@ class ProductController extends Controller
 
 	public function update(ProductUpdateRequest $request, Product $product)
 	{
-		try {
-			$product->query()->update($request->validated());
-			$product->uploadFiles($request);
-			$product->attachOrSyncSpecifications($request->input('specifications'), 'PATCH');
+		$product->query()->update($request->validated());
+		$product->uploadFiles($request);
+		$product->attachOrSyncSpecifications($request->input('specifications'), 'PATCH');
 
-			return response()->success('محصول جدید با موفقیت ثبت شد!');
-		} catch (Exception $e) {
-			return response()->error('ایجاد محصول با خطا مواجه شد:' . $e->getMessage());
-		}
+		return response()->success('محصول جدید با موفقیت ثبت شد!');
+	}
+
+	public function destroy(Product $product)
+	{
+		$product->delete();
+
+		return response()->success("محصول {$product->title} با موفقیت حذف شد");
+
 	}
 }

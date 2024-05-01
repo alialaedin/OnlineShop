@@ -65,9 +65,14 @@ class Product extends Model implements HasMedia
 	protected static function booted(): void
 	{
 		static::deleting(function (Product $product) {
-			$messages = 'این محصول قابل حذف نمی باشد زیرا موجودی ان بیشتر از 0 است!';
+			$messages = [
+				'quantity' => 'این محصول قابل حذف نمی باشد زیرا موجودی ان بیشتر از 0 است!',
+				'carts' => 'این محصول در سبد خریدی استفاده شده است و قابل حذف نمی باشد!'
+			];
 			if ($product->quantity > 0) {
-				throw new ModelCannotBeDeletedException($messages);
+				throw new ModelCannotBeDeletedException($messages['quantity']);
+			} elseif ($product->carts()->exists()) {
+				throw new ModelCannotBeDeletedException($messages['carts']);
 			}
 		});
 	}

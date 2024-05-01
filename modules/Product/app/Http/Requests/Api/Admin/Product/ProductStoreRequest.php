@@ -31,9 +31,16 @@ class ProductStoreRequest extends FormRequest
 	{
 		$status = $this->input('status');
 		$quantity = $this->input('quantity');
+		$price = $this->input('price');
+		$discount = $this->input('discount');
+		$discountType = $this->input('discount_type');
 
 		if ($status == 'available' && $quantity < 1) {
 			throw Helpers::makeValidationException('موجودی محصول باید بیشتر از 0 باشد');
+		} elseif ($quantity > 0 && $price < 1) {
+			throw Helpers::makeValidationException('قیمت محصول نمی تواند 0 باشد');
+		} elseif ($discountType == 'percent' && $discount > 100) {
+			throw Helpers::makeValidationException('چون نوع تخفیف درصدی است, درصد تخفیف نباید بیشتر از 100 باشد');
 		}
 	}
 
