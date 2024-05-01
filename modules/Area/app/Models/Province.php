@@ -12,11 +12,11 @@ class Province extends BaseAuthModel
 {
 	use HasCache;
 
-	protected $fillable = 'name';
+	protected $fillable = ['name'];
 
-	protected $casts = [
-		'created_at' => Date::class
-	];
+	// protected $casts = [
+	// 	'created_at' => Date::class
+	// ];
 
 	public static function booted(): void
 	{
@@ -26,7 +26,7 @@ class Province extends BaseAuthModel
 			}
 		});
 
-		static::clearAllCaches(['provinces', 'all_provinces']);
+		// static::clearAllCaches(['provinces', 'all_provinces']);
 	}
 
 	public static function getAllProvinces(): \Illuminate\Support\Collection
