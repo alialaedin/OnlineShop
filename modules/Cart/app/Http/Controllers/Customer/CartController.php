@@ -57,7 +57,7 @@ class CartController extends Controller
 		return response()->success("محصول {$cart->product->title} از سبد خرید با موفقیت حذف شد");
 	}
 
-	private static function checkCart(Collection $carts): array
+	private function checkCart(Collection $carts): array
 	{
 		$notifications = [];
 		
@@ -65,22 +65,18 @@ class CartController extends Controller
 
 			$productBalance = $cart->product->store->balance;
 			$cartQuantity = $cart->quantity;
+			
+			$currentPrice = $cart->price;
+			$newPrice = $cart->product->totalPriceWithDiscount();
 
 			if ($cartQuantity > $productBalance) {
 				$cart->delete();
 				$notifications[] = "محصول با عنوان {$cart->product->title} ناموجود شد!";
+			} elseif ($currentPrice != $newPrice) {
+				$cart->update(['price' => $newPrice]);
+				$notifications[] = "قیمت محصول {$cart->product->title} به {$newPrice} تومان تغییر پیدا کرده!";
 			}
 
-			if ($cart->exists()) {
-
-				$currentPrice = $cart->price;
-				$newPrice = $cart->product->totalPriceWithDiscount();
-
-				if ($currentPrice != $newPrice) {
-					$cart->update(['price' => $newPrice]);
-					$notifications[] = "قیمت محصول {$cart->product->title} به {$newPrice} تومان تغییر پیدا کرده!";
-				}
-			}
 		}
 
 		return $notifications;

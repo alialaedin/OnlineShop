@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 use Modules\Customer\Models\Customer;
 use Modules\Product\Models\Product;
 
