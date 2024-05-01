@@ -10,5 +10,6 @@
     "Specification": true,
     "Store": true,
     "Sms": true,
-    "Cart": true
+    "Cart": true,
+    "Order": true
 }
