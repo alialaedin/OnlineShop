@@ -3,6 +3,7 @@
 namespace Modules\Cart\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Modules\Cart\Http\Requests\CartStoreRequest;
 use Modules\Cart\Http\Requests\CartUpdateRequest;
@@ -23,7 +24,7 @@ class CartController extends Controller
 			])
 			->get();
 
-		$notifications = Helpers::checkCart($carts);
+		$notifications = $this->checkCart($carts);
 
 		return response()->success('لیست سبد خرید', compact('carts', 'notifications'));
 	}
@@ -54,5 +55,34 @@ class CartController extends Controller
 		$cart->delete();
 
 		return response()->success("محصول {$cart->product->title} از سبد خرید با موفقیت حذف شد");
+	}
+
+	private static function checkCart(Collection $carts): array
+	{
+		$notifications = [];
+		
+		foreach ($carts as $cart) {
+
+			$productBalance = $cart->product->store->balance;
+			$cartQuantity = $cart->quantity;
+
+			if ($cartQuantity > $productBalance) {
+				$cart->delete();
+				$notifications[] = "محصول با عنوان {$cart->product->title} ناموجود شد!";
+			}
+
+			if ($cart->exists()) {
+
+				$currentPrice = $cart->price;
+				$newPrice = $cart->product->totalPriceWithDiscount();
+
+				if ($currentPrice != $newPrice) {
+					$cart->update(['price' => $newPrice]);
+					$notifications[] = "قیمت محصول {$cart->product->title} به {$newPrice} تومان تغییر پیدا کرده!";
+				}
+			}
+		}
+
+		return $notifications;
 	}
 }
