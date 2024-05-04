@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 use Modules\Customer\Models\Customer;
 use Modules\Product\Models\Product;
 
@@ -27,6 +26,12 @@ class Cart extends Model
 		return $this->belongsTo(Customer::class);
 	}
 
+	// Functions
+	public function getCustomerId()
+	{
+		return auth('customer-api')->user()->id;
+	}
+
 	// Query 
 	public function scopeWhereCustomerId(Builder $query, int $customerId)
 	{
@@ -35,5 +40,9 @@ class Cart extends Model
 	public function scopeSelectAllWithoutTimestamp(Builder $query)
 	{
 		$query->select('id', 'customer_id', 'product_id', 'quantity', 'price');
+	}
+	public function scopeDeleteCustomerCarts(Builder $query)
+	{
+		$query->where('customer_id', $this->getCustomerId())->delete();
 	}
 }

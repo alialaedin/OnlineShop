@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Cart\Models\Cart;
+use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 use Modules\Order\Models\Order;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -36,6 +37,22 @@ class Customer extends Authenticatable
 		];
 	}
 
+	protected static function booted(): void
+	{
+		static::deleting(function (Customer $customer) {
+			$messages = [
+				'carts' => 'مشتری دارای سبد خرید است و قابل حذف نمی باشد!',
+				'orders' => 'برای این مشتری سفارشی ثبت شده است و قابل حذف نمی باشد!'
+			];
+
+			if ($customer->carts()->exists()) {
+				throw new ModelCannotBeDeletedException($messages['carts']);
+			} elseif ($customer->orders()->exists()) {
+				throw new ModelCannotBeDeletedException($messages['orders']);
+			}
+		});
+	}
+
 	// Activity Log
 	public function getActivitylogOptions(): LogOptions
 	{
@@ -58,5 +75,11 @@ class Customer extends Authenticatable
 	public function orders(): HasMany
 	{
 		return $this->hasMany(Order::class);
+	}
+
+	// functions
+	public function calcTheSumOfPricesInCart()
+	{
+		return $this->carts()->sum('price');
 	}
 }

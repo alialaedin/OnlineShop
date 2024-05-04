@@ -11,5 +11,6 @@
     "Store": true,
     "Sms": true,
     "Cart": true,
-    "Order": true
+    "Order": true,
+    "Invoice": true
 }

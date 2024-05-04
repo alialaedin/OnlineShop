@@ -59,7 +59,7 @@ class ProductController extends Controller
 		$product->uploadFiles($request);
 		$product->attachOrSyncSpecifications($request->input('specifications'), 'PATCH');
 
-		return response()->success('محصول جدید با موفقیت ثبت شد!');
+		return response()->success("محصول {$product->title} با موفقیت بروزرسانی");
 	}
 
 	public function destroy(Product $product)

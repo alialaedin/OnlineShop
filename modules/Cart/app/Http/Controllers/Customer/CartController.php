@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Modules\Cart\Http\Requests\CartStoreRequest;
 use Modules\Cart\Http\Requests\CartUpdateRequest;
 use Modules\Cart\Models\Cart;
-use Modules\Core\App\Helpers\Helpers;
 use Modules\Product\Models\Product;
 
 class CartController extends Controller
@@ -35,7 +34,7 @@ class CartController extends Controller
 
 		Cart::create([
 			'product_id' => $request->product_id,
-			'customer_id' => auth()->user()->id,
+			'customer_id' => auth('customer-api')->user()->id,
 			'quantity' => $request->quantity,
 			'price' => $product->totalPriceWithDiscount()
 		]);
