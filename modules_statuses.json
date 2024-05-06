@@ -12,5 +12,7 @@
     "Sms": true,
     "Cart": true,
     "Order": true,
-    "Invoice": true
+    "Invoice": true,
+    "Home": true,
+    "Ali": true
 }
