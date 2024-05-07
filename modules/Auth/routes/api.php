@@ -16,14 +16,14 @@ use Modules\Auth\Http\Controllers\Api\Customer\AuthController as CustomerAuthCon
 */
 
 // Admins
-Route::name('admin.')->prefix('/admin')->group(function () {
+Route::prefix('/admin')->group(function () {
 
 	Route::post('/login', [AdminAuthController::class, 'login'])->middleware('guest');
 	Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('auth:admin-api');
 });
 
 // Customers
-Route::name('customer.')->prefix('/customer')->group(function () {
+Route::prefix('/customer')->group(function () {
 
 	Route::post('/login', [CustomerAuthController::class, 'login']);
 	Route::post('/register-login', [CustomerAuthController::class, 'registerLogin']);

@@ -3,9 +3,7 @@
 namespace Modules\Product\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Modules\Product\Events\ProductCreated;
 use Modules\Product\Http\Requests\Api\Admin\Product\ProductStoreRequest;

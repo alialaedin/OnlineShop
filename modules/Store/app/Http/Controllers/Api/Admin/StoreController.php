@@ -5,7 +5,6 @@ namespace Modules\Store\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Modules\Product\Models\Product;
@@ -57,7 +56,6 @@ class StoreController extends Controller
 			return response()->error('خطا در انجام عملیات : ' . $e->getMessage());
 		}
 
-		Store::clearAllCaches();
 		$operation = $request->type == 'increment' ? 'افزایش' : 'کاهش';
 
 		return response()->success("تعداد {$product->title} با موفقیت {$operation} یافت!");

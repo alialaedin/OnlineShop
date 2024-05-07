@@ -2,6 +2,9 @@
 
 namespace Modules\Product\Models;
 
+use CyrildeWit\EloquentViewable\Contracts\Viewable;
+use CyrildeWit\EloquentViewable\InteractsWithViews;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,9 +30,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Product extends Model implements HasMedia
+class Product extends Model implements HasMedia, Viewable
 {
-	use HasFactory, LogsActivity, InteractsWithMedia, HasSlug;
+	use HasFactory, LogsActivity, InteractsWithMedia, HasSlug, InteractsWithViews;
 
 	protected $fillable = [
 		'category_id',
@@ -75,7 +78,7 @@ class Product extends Model implements HasMedia
 				throw new ModelCannotBeDeletedException($messages['quantity']);
 			} elseif ($product->carts()->exists()) {
 				throw new ModelCannotBeDeletedException($messages['carts']);
-			} elseif ($product->items()->exists()) {
+			} elseif ($product->orderItems()->exists()) {
 				throw new ModelCannotBeDeletedException($messages['items']);
 			}
 		});
@@ -103,9 +106,15 @@ class Product extends Model implements HasMedia
 		return $this->hasMany(Cart::class);
 	}
 
-	public function items(): HasMany
+	public function orderItems(): HasMany
 	{
-		return $this->hasMany(OrderItem::class, 'order_id');
+		return $this->hasMany(OrderItem::class, 'product_id');
+	}
+
+	// Query
+	public function scopeAvailable(Builder $query)
+	{
+		return $query->where('status', 'available');
 	}
 
 	// Functions
@@ -132,7 +141,11 @@ class Product extends Model implements HasMedia
 				return !is_null($specification['value']);
 			})
 			->mapWithKeys(function ($specification) {
-				return [$specification['id'] => ['value' => $specification['value']]];
+				return [
+					$specification['id'] => [
+						'value' => $specification['value']
+					]
+				];
 			});
 
 		if ($method === 'POST') {

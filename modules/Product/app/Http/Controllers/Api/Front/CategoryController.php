@@ -3,65 +3,23 @@
 namespace Modules\Product\Http\Controllers\Api\Front;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Modules\Product\Models\Category;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('product::index');
-    }
+	public function index(): JsonResponse
+	{
+		$categories = Category::query()
+			->select('id', 'name', 'parent_id', 'status')
+			->where('status', 1)
+			->with([
+				'recursiveChildren:id,name',
+				'parent:id,name'
+			])
+			->latest('id')
+			->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('product::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('product::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('product::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id): RedirectResponse
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-    }
+		return response()->success('تمام دسته بندی های فعال', compact('categories'));
+	}
 }

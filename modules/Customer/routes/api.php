@@ -6,7 +6,7 @@ use Modules\Customer\Http\Controllers\Api\Customer\ProfileController as Customer
 use Modules\Customer\Http\Controllers\Api\Customer\AddressController as CustomerAddressController;
 
 // Admin
-Route::name('customers.')->prefix('customers')->middleware('auth:admin-api')->group(function () {
+Route::prefix('admin/customers')->middleware('auth:admin-api')->group(function () {
 	Route::get('/', [AdminCustomerController::class, 'index'])->middleware('can:view customers');
 	Route::get('/{customer}', [AdminCustomerController::class, 'show'])->middleware('can:view customers');
 	Route::delete('/{customer}', [AdminCustomerController::class, 'destroy'])->middleware('can:delete customers');
@@ -20,7 +20,7 @@ Route::prefix('customer')->middleware('auth:customer-api')->group(function () {
 	Route::put('/change-password', [CustomerProfileController::class, 'changePassword']);
 
 	// Address
-	Route::prefix('addresses')->group(function () {
+	Route::prefix('customer/addresses')->middleware('auth:customer-api')->group(function () {
 		Route::get('/', [CustomerAddressController::class, 'index']);
 		Route::post('/', [CustomerAddressController::class, 'store']);
 		Route::patch('/{address}', [CustomerAddressController::class, 'update']);
