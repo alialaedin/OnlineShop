@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Modules\Product\Models\Product;
 use Modules\Slider\Models\Slider;
 
@@ -15,7 +16,7 @@ class HomeController extends Controller
   {
     $sliders = Slider::select('id', 'link')->where('status', 1)->take(4)->get();
     $latestProducts = $this->getLatestProducts(10);
-    $mostDiscountedProducts = $this->getMostDiscountProducts(10);
+    $mostDiscountedProducts = $this->getMostDiscountProducts(2);
     $mostVisitedProducts = Product::orderByUniqueViews()->take(10)->get();
     $mostSellingProducts = $this->getMostSellingProducts(10);
 
@@ -48,24 +49,26 @@ class HomeController extends Controller
 
   private function getMostDiscountProducts(int $number): Builder|Collection
   {
-    $discountedProducts = Product::query()
-      ->select('id', 'title', 'status', 'price', 'discount', 'discount_type', 'category_id')
-      ->with('category:id,name')
+    $mostDiscountedProducts = Product::query()
+      ->select(
+        'id',
+        'title',
+        'status',
+        'price',
+        'discount',
+        'discount_type',
+        DB::raw(
+          'CASE WHEN discount_type = "percent" 
+          THEN (price * discount / 100) 
+          ELSE discount END 
+          AS discount_amout'
+        )
+      )
       ->whereNotNull(['discount', 'discount_type'])
       ->available()
+      ->orderByDesc('discount_amout')
+      ->take($number)
       ->get();
-
-    $discountedProducts->transform(function ($product) {
-      $product->discount_amount = $product->price - $product->totalPriceWithDiscount();
-      return $product;
-    });
-
-    $mostDiscountedProducts = $discountedProducts->sortByDesc('discount_amount')->take($number);
-
-    $mostDiscountedProducts->transform(function ($product) {
-      unset($product['discount_amount']);
-      return $product;
-    });
 
     return $mostDiscountedProducts;
   }

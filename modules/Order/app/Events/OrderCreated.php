@@ -5,7 +5,6 @@ namespace Modules\Order\Events;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 use Modules\Order\Models\Order;
 
@@ -13,10 +12,9 @@ class OrderCreated
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
-	public function __construct(public Order $order, public Request $request)
+	public function __construct(public Order $order)
 	{
 		$this->order = $order;
-		$this->request = $request;
 	}
 
 	/**

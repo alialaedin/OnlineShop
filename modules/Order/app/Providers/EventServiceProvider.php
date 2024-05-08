@@ -4,9 +4,7 @@ namespace Modules\Order\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Modules\Order\Events\OrderCreated;
-use Modules\Order\Listeners\CreateInvoiceForOrder;
 use Modules\Order\Listeners\CreateOrderItems;
-use Modules\Order\Listeners\EmptyTheCustomerCart;
 use Modules\Order\Listeners\LoggingOfOrderStatus;
 
 class EventServiceProvider extends ServiceProvider
@@ -20,8 +18,6 @@ class EventServiceProvider extends ServiceProvider
 		OrderCreated::class => [
 			LoggingOfOrderStatus::class,
 			CreateOrderItems::class,
-			CreateInvoiceForOrder::class,
-			EmptyTheCustomerCart::class
 		]
 	];
 

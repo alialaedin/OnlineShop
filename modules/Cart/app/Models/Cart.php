@@ -41,8 +41,4 @@ class Cart extends Model
 	{
 		$query->select('id', 'customer_id', 'product_id', 'quantity', 'price');
 	}
-	public function scopeDeleteCustomerCarts(Builder $query)
-	{
-		$query->where('customer_id', $this->getCustomerId())->delete();
-	}
 }
