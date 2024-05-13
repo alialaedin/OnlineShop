@@ -3,6 +3,7 @@
 namespace Modules\Permission\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Modules\Admin\Models\Admin;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -24,6 +25,9 @@ class RolesAndPermissionsSeeder extends Seeder
 				['label' => $label, 'guard_name' => 'admin-api']
 			);
 		}
+
+		$admin = Admin::where('mobile', '09368917169');
+		$admin->assignRole('super_admin');
 
 		//create permissions
 		$permissions = [
