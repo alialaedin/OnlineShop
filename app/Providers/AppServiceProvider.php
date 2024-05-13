@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Response;
@@ -48,8 +49,10 @@ class AppServiceProvider extends ServiceProvider
 	{
 		$this->responseMacros();
 
-		// Gate::before(function ($user, $ability) {
-		// 	return $user->hasRole('super_admin') ? true : null;
-		// });
+		AliasLoader::getInstance()->alias('Payment', \Shetabit\Payment\Facade\Payment::class);
+
+		Gate::before(function ($user, $ability) {
+			return $user->hasRole('super_admin') ? true : null;
+		});
 	}
 }

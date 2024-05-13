@@ -23,8 +23,8 @@ class AddressStoreRequest extends FormRequest
 	{
 		$validated = parent::validated();
 
-		$validated['customer_id'] = auth('customer_api')->user()->id; 
-		$validated['mobile'] = auth('customer_api')->user()->mobile; 
+		$validated['customer_id'] = auth('customer-api')->user()->id;
+		$validated['mobile'] = auth('customer-api')->user()->mobile;
 
 		return $validated;
 	}

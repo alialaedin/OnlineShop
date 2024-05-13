@@ -18,7 +18,7 @@ class HomeController extends Controller
     $latestProducts = $this->getLatestProducts(10);
     $mostDiscountedProducts = $this->getMostDiscountProducts(2);
     $mostVisitedProducts = Product::orderByUniqueViews()->take(10)->get();
-    $mostSellingProducts = $this->getMostSellingProducts(10);
+    $mostSellingProducts = $this->getMostSellingProducts(3);
 
     return response()->success(':)', compact(
       'sliders',
@@ -85,5 +85,26 @@ class HomeController extends Controller
       ->orderByDesc('total_quantity')
       ->take($number)
       ->get();
+  }
+
+  private function getMostSaleProducts(int $number)
+  {
+    $products = Product::query()
+      ->select(
+        'id',
+        'title',
+        'status',
+        'price',
+        'discount',
+        'discount_type',
+        'category_id',
+        DB::raw('SUM(order_items.quantity) as total_quantity')
+      )
+      ->join('order_items', 'products.id', '=', 'order_items.product_id')
+      ->orderByDesc('total_quantity')
+      ->take($number)
+      ->get();
+
+    return $products;
   }
 }

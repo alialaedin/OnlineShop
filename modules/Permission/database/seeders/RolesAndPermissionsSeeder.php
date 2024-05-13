@@ -78,6 +78,9 @@ class RolesAndPermissionsSeeder extends Seeder
 			'view settings' => 'مشاهده تنظیمات',
 			'create settings' => 'ایجاد تنظیمات',
 			'edit settings' => 'ویرایش تنظیمات',
+			// Order
+			'view orders' => 'مشاهده سفارشات',
+			'edit orders' => 'ویرایش سفارشات'
 		];
 
 		foreach ($permissions as $name => $label) {

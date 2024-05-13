@@ -5,7 +5,6 @@ namespace Modules\Order\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
 use Modules\Cart\Models\Cart;
 use Modules\Customer\Models\Address;
 use Modules\Customer\Models\Customer;
@@ -14,7 +13,11 @@ use Modules\Invoice\Models\Payment;
 use Modules\Order\Events\OrderCreated;
 use Modules\Order\Http\Requests\OrderStoreRequest;
 use Modules\Order\Http\Requests\OrderVerifyRequest;
+use Shetabit\Multipay\Invoice as ShetabitInvoice;
+use Shetabit\Payment\Facade\Payment as ShetabitPayment;
 use Modules\Order\Models\Order;
+use Shetabit\Multipay\Exceptions\InvalidPaymentException;
+use Shetabit\Multipay\Exceptions\InvoiceNotFoundException;
 
 class OrderController extends Controller
 {
@@ -23,60 +26,108 @@ class OrderController extends Controller
 		$customer = Customer::findOrFail(auth('customer-api')->user()->id);
 		$address = Address::findOrFail($request->address_id);
 
-		// Create Order
-		$order = Order::query()->create([
-			'customer_id' => $customer->id,
-			'address_id' => $address->id,
-			'address' => $address->toJson(),
-			'amount' => $customer->calcTheSumOfPricesInCart(),
-			'status' => 'wait_for_payment'
-		]);
+		try {
+			// Create Order
+			$order = Order::query()->create([
+				'customer_id' => $customer->id,
+				'address_id' => $address->id,
+				'address' => $address->toJson(),
+				'amount' => $customer->calcTheSumOfPricesInCart(),
+				'status' => 'wait_for_payment'
+			]);
 
-		// Create OrderItem and OrderStatusLog
-		Event::dispatch(new OrderCreated($order));
+			// Create OrderItem and OrderStatusLog
+			Event::dispatch(new OrderCreated($order));
 
-		// Clear Cart
-		Cart::where('customer_id', $customer->id)->delete();
+			// Clear Cart
+			Cart::where('customer_id', $customer->id)->delete();
 
-		// Create Invoice 
-		$invoice = Invoice::create([
-			'order_id' => $order->id,
-			'amount' => $order->amount,
-			'status' => 0
-		]);
+			$driver = $request->input('driver');
+			$route = route('payments.verify', $driver);
 
-		// make Payment 
-		Payment::create([
-			'invoice_id' => $invoice->id,
-			'amount' => $invoice->amount,
-			'driver' => $request->driver,
-			'tracking_code' => null,
-			'description' => null,
-			'token' => $request->token,
-			'status' => 0
-		]);
+			// Create Invoice 
+			$invoice = Invoice::create([
+				'order_id' => $order->id,
+				'amount' => $order->amount,
+				'status' => 0
+			]);
+
+			// make Payment 
+			$payment = Payment::create([
+				'invoice_id' => $invoice->id,
+				'amount' => $invoice->amount,
+				'driver' => $request->driver,
+				'tracking_code' => null,
+				'description' => null,
+				'token' => null,
+				'status' => 0
+			]);
+
+			//amount always Toman
+			$response = ShetabitPayment::via($driver)->callbackUrl($route)
+				->purchase((new ShetabitInvoice)->amount($payment->amount),
+					function ($driver, $transactionId) use ($payment) {
+						$payment->update([
+							'token' => $transactionId
+						]);
+					}
+				)->pay()->toJson();
+			$url = json_decode($response)->action;
+
+			return response()->success('', compact('url'));
+		} catch (\Exception $exception) {
+			return response()->error('مشکلی رخ داده است: ' . $exception->getMessage(), 500);
+		}
 	}
 
-	public function verify(OrderVerifyRequest $request)
+	public function verify(OrderVerifyRequest $request, String $driver)
 	{
-		$order = Order::findOrFail($request->order_id);
+		$drivers = Payment::getAllDrivers();
+		$transactionId = $drivers[$driver]['options']['transaction_id'];
+		$payment = Payment::query()->where('token', $request->{$transactionId})->first();
 
+		DB::beginTransaction();
 		try {
-			DB::transaction(function () use ($order, $request) {
-				$orderStatus = $request->status === 'success' ? 'new' : 'failed';
-				$order->update(['status' => $orderStatus]);
-				$order->statusLogs()->create(['status' => $orderStatus]);
 
-				if ($orderStatus === 'new') {
-					$order->invoice()->update(['status' => 1]);
-					$order->payments()->where('status', 0)->update(['status' => 1]);
-				} else {
-					$order->payments()->where('status', 0)->update(['description' => $request->message]);
-				}
-			});
-		} catch (\Exception $e) {
-			Log::error("Failed to verify order: {$e->getMessage()}");
-			throw $e;
+			if (!$payment) {
+				throw new InvoiceNotFoundException('پرداختی نامعتبر است!');
+			}
+
+			$receipt = ShetabitPayment::via($driver)
+				->amount($payment->amount)
+				->transactionId($payment->token)
+				->verify();
+
+			//Update payment
+			$payment->update([
+				'tracking_code' => $receipt->getReferenceId(),
+				'status' => 1
+			]);
+
+			//Update order status
+			$order = $payment->order;
+			$order->update(['status' => 'success']);
+			$order->statusLogs()->create(['status' => 'success']);
+
+			//update invoice status
+			$invoice = $payment->invoice;
+			$invoice->update(['status' => 1]);
+
+			DB::commit();
+
+			return response()->success('', compact('url'));
+		} catch (InvalidPaymentException | InvoiceNotFoundException $exception) {
+			DB::rollBack();
+			$message = $exception->getMessage();
+			$payment->update(['description' => $message]);
+
+			$order = $payment->order;
+			if ($order->status == 'wait_for_payment') {
+				$order->update(['status' => 'failed']);
+				$order->statusLogs()->create(['status' => 'failed']);
+			}
+
+			return response()->error('مشکلی رخ داده است: ' . $exception->getMessage(), 500);
 		}
 	}
 }

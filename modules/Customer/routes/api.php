@@ -20,7 +20,7 @@ Route::prefix('customer')->middleware('auth:customer-api')->group(function () {
 	Route::put('/change-password', [CustomerProfileController::class, 'changePassword']);
 
 	// Address
-	Route::prefix('customer/addresses')->middleware('auth:customer-api')->group(function () {
+	Route::prefix('/addresses')->middleware('auth:customer-api')->group(function () {
 		Route::get('/', [CustomerAddressController::class, 'index']);
 		Route::post('/', [CustomerAddressController::class, 'store']);
 		Route::patch('/{address}', [CustomerAddressController::class, 'update']);

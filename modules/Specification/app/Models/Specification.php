@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 // use Modules\Core\App\Traits\HasCache;
 use Modules\Product\Models\Category;
+use Modules\Product\Models\Product;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -37,5 +38,11 @@ class Specification extends Model
 	public function categories(): BelongsToMany
 	{
 		return $this->belongsToMany(Category::class, 'category_specification');
+	}
+
+	public function products(): BelongsToMany
+	{
+		return $this->belongsToMany(Product::class, 'product_specification')
+			->withPivot('value');
 	}
 }

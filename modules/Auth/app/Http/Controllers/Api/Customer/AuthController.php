@@ -116,6 +116,7 @@ class AuthController extends Controller
 		$customer = $request->input('customer');
 
 		if (!$customer || !Hash::check($request->password, $customer->password)) {
+			dd(1);
 			return response()->error('اطلاعات وارد شده اشتباه است!', [], 422);
 		}
 

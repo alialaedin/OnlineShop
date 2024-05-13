@@ -19,7 +19,7 @@ return new class extends Migration
 			$table->string('driver');
 			$table->string('tracking_code')->nullable();
 			$table->text('description')->nullable();
-			$table->string('token');
+			$table->string('token')->nullable();
 			$table->boolean('status');
 			$table->timestamps();
 		});

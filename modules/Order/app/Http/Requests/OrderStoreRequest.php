@@ -27,8 +27,6 @@ class OrderStoreRequest extends FormRequest
 
 		if ($address->customer_id != auth('customer-api')->user()->id) {
 			throw Helpers::makeValidationException('آدرس مطعلق به این کاربر نمی باشد');
-		}elseif (in_array($driver, ['zarinpal', 'parsian', 'sadad'])) {
-			throw Helpers::makeValidationException('درگاه پرداختی نامعتبر است');
 		}
 	}
 	public function authorize(): bool
