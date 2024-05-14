@@ -53,7 +53,7 @@ class AuthController extends Controller
 			SmsToken::query()->updateOrCreate(
 				['mobile' => $mobile],
 				[
-					'token' => Helpers::randomNumbersCode(4),
+					'token' => 1234,
 					'expires_at' => Carbon::now()->addMinutes(2)
 				]
 			);

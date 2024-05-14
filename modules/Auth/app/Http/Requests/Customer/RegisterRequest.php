@@ -17,7 +17,7 @@ class RegisterRequest extends FormRequest
 		$isCustomerAlreadyExists = Customer::query()->where('mobile', $mobile)->exists();
 
 		if ($isCustomerAlreadyExists) {
-			$message = 'مشتری با این شماره موبایل از قبل ثبت تشده';
+			$message = 'مشتری با این شماره موبایل از قبل ثبت شده';
 			throw Helpers::makeValidationException($message);
 		}
 	}
