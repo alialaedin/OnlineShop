@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
 			'name' => ['required', 'string', 'max:100'],
 			'mobile' => ['required', 'digits:11', new IranMobile, 'unique:customers,mobile'],
 			'email' => ['nullable', 'email', 'max:191', 'unique:customers,email'],
-			'password' => ['required', Password::min(6), 'confirmed'],
+			'password' => ['required', Password::min(6)],
 		];
 	}
 
