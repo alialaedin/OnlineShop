@@ -13,7 +13,7 @@ Route::prefix('admin/categories')->middleware('auth:admin-api')->group(function 
 	Route::get('/', [AdminCategoryController::class, 'index'])->middleware('can:view categories');
 	Route::post('/', [AdminCategoryController::class, 'store'])->middleware('can:create categories');
 	Route::patch('/{category}', [AdminCategoryController::class, 'update'])->middleware('can:edit categories');
-	Route::delete('/{category}', [AdminCategoryController::class, 'destory'])->middleware('can:delete categories');
+	Route::delete('/{category}', [AdminCategoryController::class, 'destroy'])->middleware('can:delete categories');
 });
 
 Route::get('front/categories', [FrontCategoryController::class, 'index']);
@@ -24,7 +24,7 @@ Route::prefix('admin/products')->middleware('auth:admin-api')->group(function ()
 	Route::get('/{product}', [AdminProductController::class, 'show'])->middleware('can:view products');
 	Route::post('/', [AdminProductController::class, 'store'])->middleware('can:create products');
 	Route::patch('/{product}', [AdminProductController::class, 'update'])->middleware('can:edit products');
-	Route::delete('/{product}', [AdminProductController::class, 'destory'])->middleware('can:delete products');
+	Route::delete('/{product}', [AdminProductController::class, 'destroy'])->middleware('can:delete products');
 	Route::delete('/images/{media}', [MediaController::class, 'destroy'])->middleware('can:delete products image');
 });
 
