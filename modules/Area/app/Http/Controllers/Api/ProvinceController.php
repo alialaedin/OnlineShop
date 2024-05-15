@@ -10,12 +10,10 @@ class ProvinceController extends Controller
 {
 	public function index()
 	{
-		$provinces = Cache::rememberForever('all_provinces', function () {
-			return Province::query()
-				->select(['id', 'name'])
-				->orderBy('name', 'asc')
-				->get();
-		});
+		$provinces =  Province::query()
+			->select(['id', 'name'])
+			->orderBy('name', 'asc')
+			->get();
 
 		return response()->success('Get all provinces', compact('provinces'));
 	}

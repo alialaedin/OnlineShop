@@ -42,7 +42,7 @@ class City extends BaseModel
 		static::created(fn () => static::clearAllCaches());
 		static::updated(fn () => static::clearAllCaches());
 		static::deleted(fn () => static::clearAllCaches());
-		
+
 		static::deleting(function (City $city) {
 			if ($city->doctors()->exists()) {
 				throw new ModelCannotBeDeletedException(
@@ -50,7 +50,6 @@ class City extends BaseModel
 				);
 			}
 		});
-
 	}
 
 	public static function getAllCities(): \Illuminate\Support\Collection
