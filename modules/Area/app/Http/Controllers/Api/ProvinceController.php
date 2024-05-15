@@ -10,7 +10,7 @@ class ProvinceController extends Controller
 {
 	public function index()
 	{
-		$provinces =  Province::query()
+		$provinces = Province::query()
 			->select(['id', 'name'])
 			->orderBy('name', 'asc')
 			->get();
