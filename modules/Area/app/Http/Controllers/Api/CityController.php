@@ -7,8 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Modules\Area\App\Http\Requests\Api\Admin\CityStoreRequest;
 use Modules\Area\App\Http\Requests\Api\Admin\CityUpdateRequest;
-use Modules\Area\App\Models\City;
-use Modules\Area\App\Models\Province;
+use Modules\Area\Models\City;
+use Modules\Area\Models\Province;
 
 class CityController extends Controller
 {
