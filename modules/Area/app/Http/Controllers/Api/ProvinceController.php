@@ -4,7 +4,7 @@ namespace Modules\Area\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
-use Modules\Area\App\Models\Province;
+use Modules\Area\Models\Province;
 
 class ProvinceController extends Controller
 {
