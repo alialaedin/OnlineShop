@@ -18,7 +18,7 @@ class ProfileUpdateRequest extends FormRequest
 		return [
 			'name' => ['required', 'string', 'max:100'],
 			'email' => ['nullable', 'email', 'max:191', Rule::unique('admins', 'email')->ignore($adminId)],
-			'mobile' => ['nullable', 'numeric', 'digits:11', new IranMobile()]
+			'mobile' => ['nullable', 'numeric', 'digits:11', new IranMobile(), Rule::unique('admins', 'mobile')->ignore($adminId)]
 		];
 	}
 

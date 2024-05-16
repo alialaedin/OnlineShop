@@ -24,7 +24,7 @@ Route::prefix('admin/products')->middleware('auth:admin-api')->group(function ()
 	Route::get('/{product}', [AdminProductController::class, 'show'])->middleware('can:view products');
 	Route::post('/', [AdminProductController::class, 'store'])->middleware('can:create products');
 	Route::patch('/{product}', [AdminProductController::class, 'update'])->middleware('can:edit products');
-	Route::delete('/{product}', [AdminProductController::class, 'destroy'])->middleware('can:delete products');
+	Route::delete('/{product}', [AdminProductController::class, 'delete'])->middleware('can:delete products');
 	Route::delete('/images/{media}', [MediaController::class, 'destroy'])->middleware('can:delete products image');
 });
 
