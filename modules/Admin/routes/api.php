@@ -9,7 +9,7 @@ Route::prefix('admin/admins')->middleware('auth:admin-api')->group(function () {
 	Route::get('/{admin}', [AdminController::class, 'show'])->middleware('can:view admins');
 	Route::post('/', [AdminController::class, 'store'])->middleware('can:create admins');
 	Route::patch('/{admin}', [AdminController::class, 'update'])->middleware('can:edit admins');
-	Route::delete('/{admin}', [AdminController::class, 'destory'])->middleware('can:delete admins');
+	Route::delete('/{admin}', [AdminController::class, 'destroy'])->middleware('can:delete admins');
 });
 
 Route::prefix('admin/profile')->middleware('auth:admin-api')->group(function() {

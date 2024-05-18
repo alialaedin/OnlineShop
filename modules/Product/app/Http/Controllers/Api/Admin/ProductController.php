@@ -60,7 +60,7 @@ class ProductController extends Controller
 		return response()->success("محصول {$product->title} با موفقیت بروزرسانی");
 	}
 
-	public function delete(Product $product)
+	public function destroy(Product $product)
 	{
 		$product->delete();
 
